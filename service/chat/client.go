@@ -22,6 +22,7 @@ const (
 )
 
 type Client struct {
+	id   string
 	Name string
 	Hub  *Hub
 	Room *Room
@@ -37,7 +38,11 @@ func (c *Client) ReadPump() {
 
 	c.Conn.SetReadLimit(maxMessageSize)
 	c.Conn.SetReadDeadline(time.Now().Add(pongWait))
-	c.Conn.SetPongHandler(func(string) error { c.Conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+	c.Conn.SetPongHandler(func(string) error {
+		c.Conn.SetReadDeadline(time.Now().Add(pongWait))
+
+		return nil
+	})
 
 	for {
 		var message InMessage
@@ -50,9 +55,8 @@ func (c *Client) ReadPump() {
 			break
 		}
 
-		log.Println("Sending message to room")
-
-		c.Room.Broadcast <- &OutMessage{Message: message.Message, Sender: c.Name}
+		// TODO: Check if message is command
+		c.Room.Broadcast <- &OutMessage{Message: message.Message, Sender: c.Name, SenderId: c.id}
 	}
 }
 

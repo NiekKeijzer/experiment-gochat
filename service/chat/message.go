@@ -5,6 +5,7 @@ type InMessage struct {
 }
 
 type OutMessage struct {
-	Message string `json:"message"`
-	Sender  string `json:"sender"`
+	Message  string `json:"message"`
+	Sender   string `json:"sender"`
+	SenderId string `json:"-"`
 }

@@ -1,6 +1,7 @@
 package chat
 
 import (
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
@@ -26,6 +27,7 @@ func NewHub() *Hub {
 	defaultRoom := &Room{
 		clients:    make(map[string]*Client),
 		Name:       defaultRoomName,
+		Broadcast:  make(chan *OutMessage),
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
 	}
@@ -38,8 +40,9 @@ func NewHub() *Hub {
 
 func (h *Hub) NewClient(conn *websocket.Conn) *Client {
 	client := &Client{
+		id:   uuid.NewString(),
 		Conn: conn,
-		Name: defaultRoomName,
+		Name: defaultUserName,
 		Hub:  h,
 		Send: make(chan *OutMessage),
 	}
